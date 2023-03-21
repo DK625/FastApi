@@ -1,16 +1,12 @@
-from flask import Flask, request, Blueprint
-from .controllers.userController import controller
-from .config.connectDB import db
-# from .borrow.controller import borrow
-# from .extension import db, ma
-# from .model import Students, Books, Author, Category, Borrows
-from .models.model import User
 import os
+
+from flask import Flask
+from flask_cors import CORS
+from flask_restful import Api
+
 from .config.config import config
-# from flask_sqlalchemy import SQLAlchemy
-# from flask_marshmallow import Marshmallow
-# db = SQLAlchemy()
-# ma = Marshmallow()
+from .config.connect_db import db
+from .route.web import Login, sign_up, todo, todo_list
 
 
 def create_db(app):
@@ -23,14 +19,13 @@ def create_db(app):
 
 def create_app():
     app = Flask(__name__)
+    api = Api(app)
     app.config.from_mapping(config)
-    # db = SQLAlchemy()
-    # db.init_app(app)
-    # ma.init_app(app)
-    # app.config.from_pyfile(config_file)
+
+    CORS(app, supports_credentials=True)
     create_db(app)
-    app.register_blueprint(controller)
-    # app.register_blueprint(borrow)
-    # print(app.config["SECRET_KEY"])
-    # print(app.config["SQLALCHEMY_DATABASE_URI"])
+    api.add_resource(sign_up, "/api/sign_up")
+    api.add_resource(Login, "/api/login")
+    api.add_resource(todo_list, "/api/todo_list")
+    api.add_resource(todo, "/api/todo")
     return app
