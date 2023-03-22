@@ -1,0 +1,26 @@
+CREATE TABLE "Todo" (
+  "todo_id" int,
+  "" <type>,
+  "list_id" int,
+  "title" varchar(100),
+  "description" varchar(100),
+  "due_date" varchar(100),
+  "status" varchar(100),
+  PRIMARY KEY ("todo_id")
+);
+
+CREATE TABLE "User" (
+  "user_id" int,
+  "email" varchar(100),
+  "name" varchar(100),
+  "password" varchar(100),
+  PRIMARY KEY ("user_id")
+);
+
+CREATE TABLE "TodoList" (
+  "list_id" int,
+  "user_id" int,
+  "name" varchar(100),
+  "description" varchar(100),
+  PRIMARY KEY ("list_id")
+);
