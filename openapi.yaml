@@ -1,0 +1,724 @@
+openapi: 3.0.1
+info:
+  title: Swagger todos - OpenAPI 3.0
+  version: 1.0.11
+servers:
+  - url: http://localhost:8080/api
+tags:
+  - name: todo
+    description: Everything about your todos
+  - name: List
+    description: Access to todos orders
+  - name: Auth Sign Up and Login
+    description: Operations about user
+paths:
+  /lists:
+    post:
+      tags:
+        - List
+      summary: Create new list
+      requestBody:
+        description: Create new list
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/List"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+              messsage:
+                type: string
+                example: Success Operation
+        "401":
+          description: not logged in yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotLogin"
+        "409":
+          description: List's name is already in used
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Used"
+        "400":
+          description: Missing required parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissingInput"
+      security:
+        - jwt: ["ACCESS_TOKEN_SECRET"]
+    get:
+      tags:
+        - List
+      summary: Get lists by token (user_id)
+      parameters:
+        - name: list_id
+          in: query
+          description: "Paste list_id here"
+          # required: true
+          schema:
+            type: integer
+        - name: field name
+          in: query
+          description: "Paste name here"
+          # required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: "Paste page here"
+          # required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: "Paste limit here"
+          # required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GetList"
+                    example:
+                      - id: 1
+                        name: list_name
+                        description: hi
+                      - id: 2
+                        name: test
+                        description: hi hi
+                      - id: 3
+                        name: I afternoon
+                        description: you like
+                  meta:
+                    type: object
+                    properties:
+                      page:
+                        type: int
+                        example: 1
+                      limit:
+                        type: int
+                        example: 3
+                      total:
+                        type: int
+                        example: 30
+
+        "401":
+          description: not logged in yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotLogin"
+      security:
+        - jwt: ["ACCESS_TOKEN_SECRET"]
+    delete:
+      tags:
+        - List
+      summary: Delete lists by token (user_id)
+      parameters:
+        - name: list_id
+          in: query
+          description: "Paste list_id here"
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          description: not logged in yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotLogin"
+        "403":
+          description: not allow delete another list!"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotAllow"
+        "404":
+          description: List not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+      security:
+        - jwt: ["ACCESS_TOKEN_SECRET"]
+  /todos:
+    patch:
+      tags:
+        - todo
+      summary: Update an existing todo
+      description: Update an existing todo by Id
+      operationId: updatetodo
+      requestBody:
+        description: Update an existent todo in the list
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TodoUpdate"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateStatus"
+        "403":
+          description: not allow update another todo!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotAllow"
+        "404":
+          description: todo not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+        "401":
+          description: not logged in yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotLogin"
+        "400":
+          description: Missing required parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissingInput"
+      security:
+        - jwt: ["ACCESS_TOKEN_SECRET"]
+    post:
+      tags:
+        - todo
+      summary: Create new todo
+      description: create todo
+      requestBody:
+        description: Update an existent todo in the list
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Todo"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostToDo"
+        "401":
+          description: not logged in yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotLogin"
+        "403":
+          description: not allow post another todo!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotAllow"
+        "404":
+          description: Todo list not found!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+        "409":
+          description: Todo's title is already in used
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Used"
+        "400":
+          description: Missing required parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissingInput"
+      security:
+        - jwt: ["ACCESS_TOKEN_SECRET"]
+    get:
+      tags:
+        - todo
+      summary: Get todo in the list
+      parameters:
+        - name: list_id
+          in: query
+          description: "Paste list_id here"
+          required: true
+          schema:
+            type: integer
+        - name: status
+          in: query
+          description: Status values that need to be considered for filter
+          required: false
+          # explode: true
+          schema:
+            type: string
+            enum:
+              - Finished
+              - Unfinished
+              - All
+            default: All
+        - name: field name
+          in: query
+          description: "Paste name here"
+          # required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: "Paste page here"
+          # required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: "Paste limit here"
+          # required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GetToDo"
+                    example:
+                      - id: 1
+                        description: sub
+                        due_date: 2023-03-31T15:12:32+07:00
+                        status: Unfinished
+                        title: todohihi
+                        list_id: 1
+                      - id: 2
+                        description: fulhen
+                        due_date: 2023-03-31T15:15:32+07:00
+                        status: Unfinished
+                        title: todohihiss
+                        list_id: 1
+                      - id: 3
+                        description: subs
+                        due_date: 2023-03-31T16:12:32+07:00
+                        status: Finished
+                        title: todohihihaha
+                        list_id: 1
+                  meta:
+                    type: object
+                    properties:
+                      page:
+                        type: int
+                        example: 1
+                      limit:
+                        type: int
+                        example: 3
+                      total:
+                        type: int
+                        example: 30
+        "401":
+          description: not logged in yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotLogin"
+        "403":
+          description: not allow read another todo!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotAllow"
+        "404":
+          description: todo not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+      security:
+        - jwt: ["ACCESS_TOKEN_SECRET"]
+    delete:
+      tags:
+        - todo
+      summary: Delete todo in the list
+      parameters:
+        - name: todo_id
+          in: query
+          description: "Paste todo_id here"
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          description: not logged in yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotLogin"
+        "403":
+          description: not allow delete another todo!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotAllow"
+        "404":
+          description: todo not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+      security:
+        - jwt: ["ACCESS_TOKEN_SECRET"]
+  /sign-up:
+    post:
+      tags:
+        - Auth Sign Up and Login
+      summary: SignUp
+      description: Create new user
+      requestBody:
+        description: Create new user
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserSignUp"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSignUp"
+        "400":
+          description: Missing parameter required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissingInput"
+        "401":
+          description: Wrong confirm_password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongConfirmPassword"
+        "409":
+          description: Email is already in used
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Used"
+  /login:
+    post:
+      tags:
+        - Auth Sign Up and Login
+      summary: Login
+      description: Login
+      requestBody:
+        description: Login
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+        required: false
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginSuccess"
+        "403":
+          description: Wrong password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WrongPassword"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+components:
+  schemas:
+    List:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: list_name
+        description:
+          type: string
+          example: hi
+      xml:
+        name: list
+    UserSignUp:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+          example: sld@email.com
+        password:
+          type: string
+          example: "12345"
+        confirm_password:
+          type: string
+          example: "12345"
+        name:
+          type: string
+          example: "12345"
+      xml:
+        name: user_sign_up
+    UserLogin:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+          example: sld@email.com
+        password:
+          type: string
+          example: "12345"
+      xml:
+        name: user_login
+    Todo:
+      # required:
+      #   - title
+      type: object
+      properties:
+        title:
+          type: string
+          example: todo
+        list_id:
+          type: string
+          example: 1
+        description:
+          type: string
+          example: dish washing
+        due_date:
+          # type: string
+          # format: date-time
+          # example: null
+          type: string
+          description: RFC3339 Datetime to set
+          format: date-time
+          example: "2023-03-31T15:12:32+07:00"
+      xml:
+        name: todo
+    TodoUpdate:
+      type: object
+      properties:
+        todo_id:
+          type: integer
+          example: 11
+        status:
+          type: string
+          description: todo status in the list
+          enum:
+            - Unfinished
+            - Finished
+          example: Finished
+      xml:
+        name: todo
+    MissingInput:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Missing inputs parameter!
+    WrongConfirmPassword:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Password doesn not match! Try again!
+    Used:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Information has been used!
+    LoginSuccess:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZXhwIjoxNjgxOTYyMTE3fQ.0E2py0TA4JQy-MwURsUEVhDBZ_Dy5VHHtUHX5GUxDmU
+    WrongPassword:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Wrong password
+    NotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Not found!
+    NotAllow:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Not allowed to operate other people's information!
+    NotLogin:
+      type: object
+      properties:
+        message:
+          type: string
+          example: not logged in yet
+    Success:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Successful operation
+    PostToDo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        title:
+          type: string
+          example: todo
+        description:
+          type: string
+          example: dish washing
+        due_date:
+          type: string
+          description: RFC3339 Datetime to set
+          format: date-time
+          example: "2023-03-31T15:12:32+07:00"
+        list_id:
+          type: integer
+          example: 1
+        message:
+          type: string
+          example: Successful operation
+    GetList:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        description:
+          type: string
+          example: sub
+        name:
+          type: string
+          example: list_name
+    GetToDo:
+      type: object
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+        due_date:
+          type: string
+          description: RFC3339 Datetime to set
+          format: date-time
+          # example: "2023-03-31T15:12:32+07:00"
+        status:
+          type: string
+        title:
+          type: string
+        list_id:
+          type: integer
+    UpdateStatus:
+      type: object
+      properties:
+        todo_id:
+          type: integer
+          example: 11
+        status:
+          type: string
+          example: Finished
+        finished_at:
+          type: string
+          description: RFC3339 Datetime to set
+          format: date-time
+          example: "2023-03-31T15:12:32+07:00"
+        messsage:
+          type: string
+          example: The todo's status is updated
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: "##default"
+  requestBodies:
+    todo:
+      description: todo object that needs to be added to the s
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/todo"
+        application/xml:
+          schema:
+            $ref: "#/components/schemas/todo"
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/User"
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: app.decode_token
