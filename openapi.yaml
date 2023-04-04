@@ -236,12 +236,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotLogin"
-        "403":
-          description: not allow post another todo!
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotAllow"
+        # "403":
+        #   description: not allow post another todo!
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: "#/components/schemas/NotAllow"
         "404":
           description: Todo list not found!
           content:
