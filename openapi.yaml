@@ -22,7 +22,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/List"
+              $ref: "#/components/schemas/CreateListBody"
         required: true
       responses:
         "200":
@@ -30,7 +30,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/List"
+                $ref: "#/components/schemas/CreateListResponse"
               messsage:
                 type: string
                 example: Success Operation
@@ -150,12 +150,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotLogin"
-        "403":
-          description: not allow delete another list!"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotAllow"
+        # "403":
+        #   description: not allow delete another list!"
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: "#/components/schemas/NotAllow"
         "404":
           description: List not found
           content:
@@ -176,7 +176,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TodoUpdate"
+              $ref: "#/components/schemas/TodoUpdateBody"
         required: true
       responses:
         "200":
@@ -184,13 +184,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UpdateStatus"
-        "403":
-          description: not allow update another todo!
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotAllow"
+                $ref: "#/components/schemas/TodoUpdateResponse"
+        # "403":
+        #   description: not allow update another todo!
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: "#/components/schemas/NotAllow"
         "404":
           description: todo not found
           content:
@@ -221,7 +221,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Todo"
+              $ref: "#/components/schemas/TodoBody"
         required: true
       responses:
         "200":
@@ -229,7 +229,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PostToDo"
+                $ref: "#/components/schemas/ToDoResponse"
         "401":
           description: not logged in yet
           content:
@@ -352,12 +352,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotLogin"
-        "403":
-          description: not allow read another todo!
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotAllow"
+        # "403":
+        #   description: not allow read another todo!
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: "#/components/schemas/NotAllow"
         "404":
           description: todo not found
           content:
@@ -390,12 +390,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotLogin"
-        "403":
-          description: not allow delete another todo!
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotAllow"
+        # "403":
+        #   description: not allow delete another todo!
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: "#/components/schemas/NotAllow"
         "404":
           description: todo not found
           content:
@@ -415,7 +415,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserSignUp"
+              $ref: "#/components/schemas/UserSignUpBody"
         required: true
       responses:
         "200":
@@ -423,7 +423,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserSignUp"
+                $ref: "#/components/schemas/UserSignUpResponse"
         "400":
           description: Missing parameter required
           content:
@@ -453,7 +453,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserLogin"
+              $ref: "#/components/schemas/UserLoginBody"
         required: false
       responses:
         "200":
@@ -461,7 +461,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LoginSuccess"
+                $ref: "#/components/schemas/UserLoginResponse"
         "403":
           description: Wrong password
           content:
@@ -476,7 +476,7 @@ paths:
                 $ref: "#/components/schemas/NotFound"
 components:
   schemas:
-    List:
+    CreateListBody:
       required:
         - name
       type: object
@@ -487,9 +487,18 @@ components:
         description:
           type: string
           example: hi
-      xml:
-        name: list
-    UserSignUp:
+    CreateListResponse:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: list_name
+        description:
+          type: string
+          example: hi
+    UserSignUpBody:
       required:
         - email
         - password
@@ -507,9 +516,25 @@ components:
         name:
           type: string
           example: "12345"
-      xml:
-        name: user_sign_up
-    UserLogin:
+    UserSignUpResponse:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+          example: sld@email.com
+        password:
+          type: string
+          example: "12345"
+        name:
+          type: string
+          example: "12345"
+        id:
+          type: integer
+          example: 1
+    UserLoginBody:
       required:
         - email
         - password
@@ -523,7 +548,7 @@ components:
           example: "12345"
       xml:
         name: user_login
-    Todo:
+    TodoBody:
       # required:
       #   - title
       type: object
@@ -547,7 +572,7 @@ components:
           example: "2023-03-31T15:12:32+07:00"
       xml:
         name: todo
-    TodoUpdate:
+    TodoUpdateBody:
       type: object
       properties:
         todo_id:
@@ -580,7 +605,7 @@ components:
         message:
           type: string
           example: Information has been used!
-    LoginSuccess:
+    UserLoginResponse:
       type: object
       properties:
         token:
@@ -616,7 +641,7 @@ components:
         message:
           type: string
           example: Successful operation
-    PostToDo:
+    ToDoResponse:
       type: object
       properties:
         id:
@@ -669,7 +694,7 @@ components:
           type: string
         list_id:
           type: integer
-    UpdateStatus:
+    TodoUpdateResponse:
       type: object
       properties:
         todo_id:
