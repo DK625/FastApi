@@ -35,6 +35,7 @@ paths:
                   - id: 1
                     name: list_name
                     description: hi
+                    create_at: 2023-03-31T15:12:32+07:00
 
         "401":
           description: not logged in yet
@@ -42,6 +43,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotLogin"
+        "404":
+          description: List not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
       security:
         - jwt: ["ACCESS_TOKEN_SECRET"]
   /lists:
@@ -119,12 +126,15 @@ paths:
                       - id: 1
                         name: list_name
                         description: hi
+                        create_at: 2023-03-31T15:12:32+07:00
                       - id: 2
                         name: test
                         description: hi hi
+                        create_at: 2023-03-31T15:12:34+07:00
                       - id: 3
                         name: I afternoon
                         description: you like
+                        create_at: 2023-03-31T15:12:35+07:00
                   meta:
                     type: object
                     properties:
@@ -144,6 +154,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotLogin"
+        "404":
+          description: List not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
       security:
         - jwt: ["ACCESS_TOKEN_SECRET"]
         # get: "/v1/{name=shelves/*/books/*}"
@@ -699,6 +715,10 @@ components:
         name:
           type: string
           example: list_name
+        create_at:
+          type: string
+          description: RFC3339 Datetime to set
+          format: date-time
     GetToDo:
       type: object
       properties:
