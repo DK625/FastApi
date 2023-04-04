@@ -12,6 +12,38 @@ tags:
   - name: Auth Sign Up and Login
     description: Operations about user
 paths:
+  /lists/{id}:
+    get:
+      tags:
+        - List
+      summary: Get lists by list_id
+      parameters:
+        - name: list_id
+          in: path
+          description: "Paste list_id here"
+          # required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetList"
+                example:
+                  - id: 1
+                    name: list_name
+                    description: hi
+
+        "401":
+          description: not logged in yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotLogin"
+      security:
+        - jwt: ["ACCESS_TOKEN_SECRET"]
   /lists:
     post:
       tags:
@@ -59,18 +91,6 @@ paths:
         - List
       summary: Get lists by token (user_id)
       parameters:
-        - name: list_id
-          in: query
-          description: "Paste list_id here"
-          # required: true
-          schema:
-            type: integer
-        - name: field name
-          in: query
-          description: "Paste name here"
-          # required: true
-          schema:
-            type: string
         - name: page
           in: query
           description: "Paste page here"
@@ -126,6 +146,8 @@ paths:
                 $ref: "#/components/schemas/NotLogin"
       security:
         - jwt: ["ACCESS_TOKEN_SECRET"]
+        # get: "/v1/{name=shelves/*/books/*}"
+        # get: "/v1/{parent=shelves/*}/books
     delete:
       tags:
         - List
@@ -363,7 +385,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NotFound"
+                type: object
+                # $ref: "#/components/schemas/NotFound"
       security:
         - jwt: ["ACCESS_TOKEN_SECRET"]
     delete:
