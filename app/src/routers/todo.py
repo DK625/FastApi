@@ -3,24 +3,26 @@ from fastapi_pagination import Page
 from sqlalchemy.orm import Session
 
 from ... import errors
-from .. import database, models, oauth2, schemas, token
+from .. import dependencies, models, oauth2, schemas, token
 from ..jwt_bearer import JWTBearer
 from ..repository import todo
 
 router = APIRouter(prefix="/todos", tags=["Todo"])
 
-get_db = database.get_db
+get_db = dependencies.get_db
 
 
 @router.post("/", dependencies=[Depends(JWTBearer(Request))], response_model=schemas.CreateTodoResponse)
-def create_new_todo(
-    request: Request, response: Response, payload: schemas.CreateTodoBody, db: Session = Depends(get_db)
-):
+def create_new_todo(request: Request, payload: schemas.CreateTodoBody, db: Session = Depends(get_db)):
     try:
         key = (request.headers.get("authorization")).split(" ")[-1]
         auth_info = token.verify_token(key)
         user_id = auth_info["user_id"]
-        post_todo = todo.create(payload, user_id, response, db)
+        list_id = payload.list_id
+        title = payload.title
+        description = payload.description
+        due_date = payload.due_date
+        post_todo = todo.create(list_id, title, description, due_date, user_id, db)
         return post_todo
     except errors.Used:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail={"error": "Information has been used!"})
@@ -63,7 +65,9 @@ def update_an_exit_todo(request: Request, payload: schemas.UpdateTodoBody, db: S
         key = (request.headers.get("authorization")).split(" ")[-1]
         auth_info = token.verify_token(key)
         user_id = auth_info["user_id"]
-        update_todo = todo.update(payload, user_id, db)
+        todo_id = payload.todo_id
+        status_todo = payload.status
+        update_todo = todo.update(todo_id, status_todo, user_id, db)
         return update_todo
     except errors.NotFound:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": "Todo Not Found!"})

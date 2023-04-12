@@ -4,27 +4,20 @@ from fastapi.security import HTTPBearer
 from fastapi_pagination import LimitOffsetPage, Page, add_pagination, paginate
 
 from . import models
-from .database import engine
-from .routers import authentication, list, todo
+from .db.session import engine
+from .routers import authentication, list_todo, todo
 
 app = FastAPI()
 
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):
-    # return JSONResponse(content={"error": str(exc)})
-    return PlainTextResponse(str(exc.detail), status_code=exc.status_code)
+    return JSONResponse(content={"error": str(exc.detail["error"])}, status_code=exc.status_code)
 
 
 models.Base.metadata.create_all(engine)
 
 app.include_router(authentication.router)
-app.include_router(list.router)
+app.include_router(list_todo.router)
 app.include_router(todo.router)
 add_pagination(app)
-
-# uvicorn app.blog.main:app --reload
-# {
-#   "email": "minhha10c8@gmail.com",
-#   "password": "12345"
-# }
