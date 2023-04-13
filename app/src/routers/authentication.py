@@ -34,13 +34,3 @@ def login(request: schemas.LoginBody, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail={"error": "Wrong username or password informations"}
         )
-    # except errors.NotFound:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND, detail={"error": "Wrong username or password information"}
-    #     )
-    # except errors.IncorrectPasswordError:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND,
-    #         detail={"error": "Wrong username or password information"}
-    #         # status_code=status.HTTP_403_FORBIDDEN, detail={"error": "Wrong username or password information"}
-    #     )

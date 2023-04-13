@@ -34,8 +34,12 @@ class LoginBody(BaseModel):  # DTO/Schema
 
 class LoginResponse(BaseModel):
     token: str = Field(
-        default="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2ODExODI0MDd9.j7bP8zGtdy_GHm4zb_nN_nUy_kcGiyQZ_JFO7QTwSlQ"
+        default="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2ODEzMTIyNDF9.IEHuw0e9qgGdCrz--wNw4CiKoiMbvGoukXJrYiFFNyE"
     )
+
+
+class User(BaseModel):
+    id: int
 
 
 class CreateListBody(BaseModel):
@@ -54,6 +58,7 @@ class GetListByIdResponse(BaseModel):
     description: str
     name: str
     created_at: datetime
+    owner_id: str
 
     class Config:
         orm_mode = True

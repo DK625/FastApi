@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.security import HTTPBearer
@@ -11,7 +12,8 @@ app = FastAPI()
 
 
 @app.exception_handler(HTTPException)
-async def http_exception_handler(request, exc):
+async def http_exception_handler(request, exc: HTTPException):
+    # print(exec)
     return JSONResponse(content={"error": str(exc.detail["error"])}, status_code=exc.status_code)
 
 

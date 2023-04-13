@@ -1,33 +1,24 @@
-from fastapi import HTTPException, Request
-from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
+from typing import Optional
 
-from . import token
+from fastapi import Depends, HTTPException, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel
+
+from . import token as auth_service
+from .schemas import User
 
 
-# data = None
-class JWTBearer(HTTPBearer):
-    def __init__(self, auto_error: bool = True):
-        super(JWTBearer, self).__init__(auto_error=auto_error)
-
-    async def __call__(self, request: Request):
-        credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
-        if credentials:
-            if not credentials.scheme == "Bearer":
-                raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
-            if not self.verify_jwt(jwtoken=credentials.credentials):
-                raise HTTPException(status_code=403, detail="Invalid token or expired token.")
-            return credentials.credentials
-        else:
-            raise HTTPException(status_code=403, detail="Invalid authorization code.")
-
-    def verify_jwt(self, jwtoken: str) -> bool:
-        isTokenValid: bool = False
-
+class AuthHttpBearer(HTTPBearer):
+    async def __call__(self, request: Request) -> Optional[HTTPAuthorizationCredentials]:
         try:
-            payload = token.verify_token(token=jwtoken)
-        except:
-            payload = None
+            return await super().__call__(request)
+        except HTTPException as e:
+            raise HTTPException(status_code=e.status_code, detail={"error": e.detail})
 
-        if payload:
-            isTokenValid = True
-        return isTokenValid
+
+def get_user(token: HTTPAuthorizationCredentials = Depends(AuthHttpBearer())):
+    try:
+        payload = auth_service.verify_token(token=token.credentials)
+    except auth_service.TokenError:
+        raise HTTPException(status_code=401, detail={"error": "Invalid token"})
+    return User(id=payload["user_id"])
